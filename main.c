@@ -19,7 +19,7 @@ int main()
 	int ** dMatrix = NULL;
 	int sizeDFA = 0;
 	getInput(&matrix, &numStates, &numSymbols);
-	display(matrix, numStates, numSymbols);
+	//display(matrix, numStates, numSymbols);
 	compute(&dStates, &dMatrix, matrix, numStates, numSymbols, &sizeDFA);
 	displayDFA(dStates, dMatrix, numStates, numSymbols, sizeDFA);
 	return 0;
@@ -41,7 +41,7 @@ int displayDFA(int ** dStates, int ** dMatrix, int numStates, int numSymbols, in
 		for(j = 1; j < numSymbols; j++) {
 			printf("\t");
 			stateId = dMatrix[i][j];
-			displayDfaState(dStates[i], numStates);
+			displayDfaState(dStates[stateId], numStates);
 		}
 		printf("\n");
 	}
@@ -81,14 +81,18 @@ int compute(int *** dStates, int *** dMatrix, int *** matrix, int numStates, int
 	dStates[0][size - 1] = state;
 
 	while(i < size) {
+		//displayDfaState(dStates[0][i], numStates);
+		dMatrix[0] = (int **) realloc(dMatrix[0], (i + 1) * sizeof(int *));
+		dMatrix[0][i] = (int *) malloc(numSymbols * sizeof(int));
 		for (j = 1; j < numSymbols; j++) {
 			initialize_stateArray(&newState, numStates);
 			move(matrix, dStates[0][i], j, newState, numStates);
 			e_close(matrix, numSymbols, numStates, newState);
 			//if newState not in dStates => size++ , push newState to dStates
-			dMatrix[0] = (int **) realloc(dMatrix[0], (i + 1) * sizeof(int *));
-			dMatrix[0][i] = (int *) malloc(numSymbols * sizeof(int));
-
+			
+			//printf("\t");
+			//displayDfaState(newState, numStates);
+			
 			index = locate(*dStates, size, newState, numStates);
 			if (index == -1) {
 				size++;
@@ -97,8 +101,10 @@ int compute(int *** dStates, int *** dMatrix, int *** matrix, int numStates, int
 				index = size - 1;
 			}
 			dMatrix[0][i][j] = index;
+			//displayDfaState(dStates[0][index], numStates);
 			//dMatrix reallocate and set dMatrix[i][j] = index(newState, dStates)
 		}
+		//printf("\n");
 		i++;
 	}
 	sizeDFA[0] = size;
