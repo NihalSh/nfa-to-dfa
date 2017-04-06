@@ -1,7 +1,6 @@
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#define READ_MAX 100
 
 int getStates(int * array);
 
@@ -40,6 +39,50 @@ int display(int *** matrix, int numStates, int numSymbols)
 	return 0;
 }
 
+int e_close(int *** matrix, int numSymbols, int numStates, int * states)
+{
+	int i;
+	int j;
+	int flag = 1;
+	int * closure = (int *) malloc(numStates * sizeof(int));
+	// initialize closure
+	for (i = 0; i < numStates; i++) {
+		closure[i] = 0;
+	}
+	// find closure
+	while (flag) {
+		flag = 0;
+		for (i = 0; i < numStates; i++) {
+			if (states[i] == 1) {
+				flag = 1;
+				for (j = 0; j < numStates; j++) {
+					if (matrix[i][0][j] == 1) {
+						if (states[j] == 0) {
+							states[j] = 1;
+						}
+						closure[j] = 1;
+					}
+				}
+				states[i] = 2;
+			}
+		}
+	}
+	//set output array to represent closure
+	for (i = 0; i < numStates; i++) {
+		if (states[i] == 2) {
+			closure[i] = 1;
+		}
+		if (closure[i] == 1) {
+			states[i] = 1;
+		} else {
+			states[i] = 0;
+		}
+	}
+	free(closure);
+	closure = NULL;
+	return 0;
+}
+
 int getInput(int **** matrix, int * countStates, int * countSymbols)
 {
 	int numSym;
@@ -51,7 +94,7 @@ int getInput(int **** matrix, int * countStates, int * countSymbols)
 	scanf(" %d", &numSym);
 	printf("Number of States: ", &numSym);
 	scanf(" %d", &numStates);
-	if ((numSym < 1) || (numStates < 1)) {
+	if ((numSym < 0) || (numStates < 1)) {
 		return 1;
 	}
 	
