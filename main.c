@@ -6,16 +6,49 @@ int getStates(int * array);
 
 int getInput(int **** matrix, int * countStates, int * countSymbols);
 
+int e_close(int *** matrix, int numSymbols, int numStates, int * states);
+
 int display(int *** matrix, int numStates, int numSymbols);
 
 int main()
 {
-	int *** matrix;
+	int *** matrix = NULL;
 	int numStates;
 	int numSymbols;
+	int ** dStates = NULL;
+	int ** dMatrix = NULL;
 	getInput(&matrix, &numStates, &numSymbols);
 	display(matrix, numStates, numSymbols);
+	compute(&dStates, &dMatrix, matrix, numStates, numSymbols);
 	return 0;
+}
+
+int compute(int *** dStates, int *** dMatrix, int *** matrix, int numStates, int numSymbols)
+{
+	int j;
+	int i = 0;
+	int size = 1;
+	//q0 is the start state;
+
+	//initialize a state array
+	int * state = (int *) malloc(numStates * sizeof(int));
+	for (j = 0; j < numStates; j++) {
+		state[j] = 0;
+	}
+
+	//find epsilon closure of the start state
+	state[0] = 1;
+	e_close(matrix, numSymbols, numStates, state);
+	//dStates[0] is just to dereference the pointer, it is not an array
+	dStates[0] = (int **) malloc(size * sizeof(int *));
+	dStates[0][size - 1] = state;
+
+	while(i < size) {
+		for (j = 0; j < numStates; j++) {
+
+		}
+		i++;
+	}
 }
 
 int display(int *** matrix, int numStates, int numSymbols)
